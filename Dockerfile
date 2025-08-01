@@ -1,0 +1,59 @@
+# 라즈베리파이5용 ROS2 Humble Dockerfile
+FROM arm64v8/ubuntu:22.04
+
+# 환경 변수 설정
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ROS_DISTRO=humble
+
+# 시스템 패키지 업데이트 및 필수 패키지 설치
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg2 \
+    lsb-release \
+    software-properties-common \
+    python3-pip \
+    python3-colcon-common-extensions \
+    build-essential \
+    cmake \
+    git \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# ROS2 Humble 저장소 추가
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# ROS2 Humble 설치
+RUN apt-get update && apt-get install -y \
+    ros-humble-desktop \
+    ros-humble-robot-state-publisher \
+    ros-humble-joint-state-publisher \
+    ros-humble-rviz2 \
+    ros-humble-xacro \
+    && rm -rf /var/lib/apt/lists/*
+
+# 작업 디렉토리 생성
+WORKDIR /ros2_ws
+
+# 소스 코드 복사
+COPY src/ ./src/
+
+# udev 규칙 복사
+COPY src/sllidar_ros2/scripts/rplidar.rules /etc/udev/rules.d/
+
+# 빌드 및 설치
+RUN . /opt/ros/humble/setup.sh && \
+    colcon build --symlink-install
+
+# 환경 설정 스크립트 생성
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
+    echo "source /ros2_ws/install/setup.bash" >> ~/.bashrc
+
+# USB 장치 접근을 위한 그룹 추가
+RUN usermod -a -G dialout root
+
+# 포트 노출
+EXPOSE 11311
+
+# 기본 명령어 설정
+CMD ["/bin/bash"] 

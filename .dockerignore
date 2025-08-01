@@ -1,0 +1,24 @@
+# 빌드 결과물
+build/
+install/
+log/
+
+# Git 관련
+.git/
+.gitignore
+
+# 문서 파일
+*.pdf
+*.gv
+
+# 임시 파일
+*.tmp
+*.log
+
+# IDE 설정
+.vscode/
+.idea/
+
+# OS 생성 파일
+.DS_Store
+Thumbs.db 
