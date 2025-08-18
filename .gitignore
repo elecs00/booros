@@ -1,0 +1,41 @@
+# ROS2 빌드 결과물
+build/
+install/
+log/
+
+# Python 캐시 파일
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# CMake 캐시 파일
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# IDE 설정 파일
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS 생성 파일
+.DS_Store
+Thumbs.db
+
+# 임시 파일
+*.tmp
+*.log
+*.bak
+
+# Docker 관련
+.docker/
+
+# 환경 변수 파일
+.env
+
+# 문서 파일 (선택적)
+*.pdf
+*.gv 

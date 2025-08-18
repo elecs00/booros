@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  ros2_slampibot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ros2_slampibot
+    privileged: true  # USB 장치 접근을 위해 필요
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"  # Lidar USB 장치
+    volumes:
+      - ./src:/ros2_ws/src:ro  # 소스 코드 마운트 (읽기 전용)
+      - ./install:/ros2_ws/install  # 설치된 파일들 마운트
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 디스플레이 (GUI용)
+      - /dev:/dev:ro  # 모든 장치 접근 (필요시)
+    environment:
+      - DISPLAY=${DISPLAY}  # GUI 표시를 위한 환경변수
+      - ROS_DOMAIN_ID=0
+      - QT_X11_NO_MITSHM=1  # Qt GUI 문제 해결
+    network_mode: host  # 네트워크 호스트 모드
+    stdin_open: true
+    tty: true
+    command: >
+      bash -c "
+        source /opt/ros/humble/setup.bash &&
+        source /ros2_ws/install/setup.bash &&
+        ros2 launch slampibot_description spb_real_a1_launch.py
+      "
+    restart: unless-stopped
+
+  # 개발용 서비스 (launch 파일 실행하지 않음)
+  ros2_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ros2_slampibot_dev
+    privileged: true
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    volumes:
+      - ./src:/ros2_ws/src
+      - ./install:/ros2_ws/install
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /dev:/dev:ro
+    environment:
+      - DISPLAY=${DISPLAY}
+      - ROS_DOMAIN_ID=0
+      - QT_X11_NO_MITSHM=1
+    network_mode: host
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+    profiles:
+      - dev 
