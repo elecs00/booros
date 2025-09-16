@@ -290,23 +290,13 @@ TurtleBot3를 4륜 구동으로 변경하려면 OpenCR 보드의 모터 드라�
 - 전원 공급이 4개 모터 모두 충분한지 확인 필요
 
 
-## 📷 실제 환경 사진
-
-<p>
-  <img src="screenshot/1.png" alt="실제 환경 사진 1" width="360" />
-  <img src="screenshot/2.png" alt="실제 환경 사진 2" width="360" />
-  <img src="screenshot/3.png" alt="실제 환경 사진 3" width="360" />
-  <img src="screenshot/4.png" alt="실제 환경 사진 4" width="360" />
-  <img src="screenshot/5.png" alt="실제 환경 사진 5" width="360" />
-</p>
-
 ## 📷 실제 환경 사진 (단일 이미지 표시)
 
 
 <img src="screenshot/1.png" alt="실제 환경 사진 1" width="720" />
 
 
-<img src="screenshot/2.png" alt="실제 환경 사진 2" width="720" />
+<img src="screenshot/2.png" alt="실제 환경 사진 2" width="480" />
 
 
 <img src="screenshot/3.png" alt="실제 환경 사진 3" width="720" />
