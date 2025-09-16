@@ -289,3 +289,13 @@ TurtleBot3를 4륜 구동으로 변경하려면 OpenCR 보드의 모터 드라�
 - 모터 ID가 1, 2, 3, 4로 올바르게 설정되어 있어야 함
 - 전원 공급이 4개 모터 모두 충분한지 확인 필요
 
+
+## 📷 실제 환경 사진
+
+<p>
+  <img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2014-55-40.png" alt="실제 환경 사진 1" width="360" />
+  <img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-11-52.png" alt="실제 환경 사진 2" width="360" />
+  <img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-12-13.png" alt="실제 환경 사진 3" width="360" />
+  <img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-12-56.png" alt="실제 환경 사진 4" width="360" />
+  <img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-13-32.png" alt="실제 환경 사진 5" width="360" />
+</p>
