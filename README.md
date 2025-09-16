@@ -293,30 +293,30 @@ TurtleBot3를 4륜 구동으로 변경하려면 OpenCR 보드의 모터 드라�
 ## 📷 실제 환경 사진
 
 <p>
-  <img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2014-55-40.png" alt="실제 환경 사진 1" width="360" />
-  <img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-11-52.png" alt="실제 환경 사진 2" width="360" />
-  <img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-12-13.png" alt="실제 환경 사진 3" width="360" />
-  <img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-12-56.png" alt="실제 환경 사진 4" width="360" />
-  <img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-13-32.png" alt="실제 환경 사진 5" width="360" />
+  <img src="screenshot/1.png" alt="실제 환경 사진 1" width="360" />
+  <img src="screenshot/2.png" alt="실제 환경 사진 2" width="360" />
+  <img src="screenshot/3.png" alt="실제 환경 사진 3" width="360" />
+  <img src="screenshot/4.png" alt="실제 환경 사진 4" width="360" />
+  <img src="screenshot/5.png" alt="실제 환경 사진 5" width="360" />
 </p>
 
 ## 📷 실제 환경 사진 (단일 이미지 표시)
 
 
-<img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2014-55-40.png" alt="실제 환경 사진 1" width="720" />
+<img src="screenshot/1.png" alt="실제 환경 사진 1" width="720" />
 
 
-<img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-11-52.png" alt="실제 환경 사진 2" width="720" />
+<img src="screenshot/2.png" alt="실제 환경 사진 2" width="720" />
 
 
-<img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-12-13.png" alt="실제 환경 사진 3" width="720" />
+<img src="screenshot/3.png" alt="실제 환경 사진 3" width="720" />
 
 
-<img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-12-56.png" alt="실제 환경 사진 4" width="720" />
+<img src="screenshot/4.png" alt="실제 환경 사진 4" width="720" />
 
 
-<img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-13-32.png" alt="실제 환경 사진 5" width="720" />
+<img src="screenshot/5.png" alt="실제 환경 사진 5" width="720" />
 
 
-<img src="screenshot/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-16%2015-17-17.png" alt="실제 환경 사진 6" width="720" />
+<img src="screenshot/6.png" alt="실제 환경 사진 6" width="720" />
 
