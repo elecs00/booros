@@ -1,35 +1,40 @@
-# App Waypoint - ROS2 기반 웨이포인트 네비게이션 시스템
+# booros — 음성 안내 도슨트 로봇 (ROS2 · TurtleBot3 4륜 개조)
 
-이 프로젝트는 ROS2를 기반으로 한 자율주행 로봇의 웨이포인트 네비게이션 시스템입니다. 음성 인식(STT), 음성 합성(TTS), 웹 인터페이스를 통해 로봇이 미리 설정된 위치로 이동하고 작품에 대한 설명을 제공합니다.
+전시장에서 관람객의 음성 명령을 받아 작품 앞으로 자율주행하고, 고개 끄덕임을 감지하면 작품 설명을 들려주는 ROS2 로봇 시스템입니다.
 
-## 🐳 Docker로 빠른 시작하기 (권장)
+| 항목 | 내용 |
+|---|---|
+| 플랫폼 | TurtleBot3 Burger 기반 4륜 개조 (OpenCR + Dynamixel 4개), Raspberry Pi, LiDAR, Pi 카메라 |
+| 소프트웨어 | ROS2 Humble, Nav2 (`NavigateToPose` 액션), Flask, Docker (arm64) |
+| 직접 구현 | 웨이포인트 주행·대화 흐름 노드(`app_waypoint/waypoint.py`), 웨이포인트 관리 웹(`web_server.py`), STT 퍼블리셔, 오디오 노드, 카메라 노드, 로봇 bringup launch, **4륜 구동 모터 드라이버 수정**(`turtlebot3_motor_driver.cpp`) |
+| 외부 서비스 | Perplexity API (작품 설명 생성, 키는 환경변수 `PERPLEXITY_API_KEY`) |
 
-Docker를 사용하면 복잡한 설치 과정 없이 바로 실행할 수 있습니다:
+### 동작 흐름
+
+```
+음성("게르니카로 이동해줘") → /stt_result → waypoint.py → Nav2 navigate_to_pose → 목적지 도착
+→ /nod_control 으로 끄덕임 감지 시작 → /action/nod 수신 → Perplexity 로 설명 생성 → /tts_text → 스피커
+```
+
+## 🐳 Docker 이미지 (Docker Hub `elecs00/boo_ros`)
+
+> ⚠️ 세 이미지 모두 **arm64 전용**(로봇에 탑재한 Raspberry Pi 용)입니다. 일반 x86 PC 에서는 실행되지 않습니다.
+> 이미지에는 Nav2 와 `app_waypoint` 코드가 들어 있지 않습니다. 아래 "수동 설치"의 Nav2 설치와 코드 복사가 별도로 필요합니다.
+
+| 태그 | 내용 |
+|---|---|
+| `v1` | ROS2 Humble + TurtleBot3·LiDAR 드라이버(LDS/LD08/COIN-D4/RPLIDAR) + DynamixelSDK + libcamera·picamera2 (`baseDockerfile/`) |
+| `v1_cam` | `v1` 에 카메라 인식 실험 환경을 더해 저장한 이미지 |
+| `v1_audio` | ROS2 Humble base + ALSA·ffmpeg + 음성 출력 노드 (`audioDockerfile/`) |
 
 ```bash
-# 기본 ROS2 이미지
 docker pull elecs00/boo_ros:v1
-
-# 오디오 기능이 포함된 이미지
-docker pull elecs00/boo_ros:v1_audio
-
-# 카메라 기능이 포함된 이미지  
-docker pull elecs00/boo_ros:v1_cam
+docker run -it --rm --net=host --privileged elecs00/boo_ros:v1            # 기본(모터·LiDAR)
+docker run -it --rm --net=host --device /dev/snd elecs00/boo_ros:v1_audio  # 스피커
+docker run -it --rm --net=host --privileged elecs00/boo_ros:v1_cam        # 카메라
 ```
 
-### Docker 컨테이너 실행 예시
-```bash
-# 기본 이미지로 실행
-docker run -it --rm elecs00/boo_ros:v1
-
-# 오디오 기능과 함께 실행 (마이크/스피커 접근)
-docker run -it --rm --device /dev/snd elecs00/boo_ros:v1_audio
-
-# 카메라 기능과 함께 실행 (카메라 접근)
-docker run -it --rm --device /dev/video0 elecs00/boo_ros:v1_cam
-```
-
-> **💡 팁**: Docker를 사용하면 ROS2, Nav2, Python 의존성 등을 별도로 설치할 필요가 없습니다!
+> 참고: `v1`·`v1_cam` 은 컨테이너 안에서 작업한 뒤 저장한 층을 포함하므로, 저장소의 Dockerfile 로 다시 빌드한 결과와 완전히 같지는 않습니다. 컨테이너끼리는 `ROS_DOMAIN_ID=50` 으로 통신합니다.
 
 ---
 
@@ -45,8 +50,8 @@ docker run -it --rm --device /dev/video0 elecs00/boo_ros:v1_cam
 ## 📋 시스템 요구사항
 
 ### Docker 사용 시 (권장)
-- **Docker** 및 **Docker Compose**
-- **Linux 환경** (Ubuntu 권장)
+- **Docker**
+- **arm64 Linux** (Raspberry Pi 등)
 
 ### 수동 설치 시
 - **ROS2 Humble** (Ubuntu 22.04)
@@ -62,38 +67,9 @@ docker run -it --rm --device /dev/video0 elecs00/boo_ros:v1_cam
 
 ## 🛠️ 설치 방법
 
-### 방법 1: Docker 사용 (권장)
+### 방법 1: Docker 사용
 
-#### 1. Docker 설치
-```bash
-# Ubuntu에서 Docker 설치
-sudo apt update
-sudo apt install docker.io docker-compose
-sudo systemctl start docker
-sudo systemctl enable docker
-sudo usermod -aG docker $USER
-# 로그아웃 후 다시 로그인 필요
-```
-
-#### 2. Docker 이미지 다운로드
-```bash
-# 필요한 이미지 다운로드
-docker pull elecs00/boo_ros:v1
-docker pull elecs00/boo_ros:v1_audio
-docker pull elecs00/boo_ros:v1_cam
-```
-
-#### 3. 컨테이너 실행
-```bash
-# 기본 실행
-docker run -it --rm elecs00/boo_ros:v1
-
-# 오디오 기능 포함 실행
-docker run -it --rm --device /dev/snd elecs00/boo_ros:v1_audio
-
-# 카메라 기능 포함 실행
-docker run -it --rm --device /dev/video0 elecs00/boo_ros:v1_cam
-```
+위 "Docker 이미지" 절을 참고하세요.
 
 ### 방법 2: 수동 설치
 
@@ -142,6 +118,7 @@ source ~/.bashrc
 
 ```bash
 # 웹 서버 실행
+cd app_waypoint
 python3 web_server.py
 ```
 
@@ -152,7 +129,7 @@ python3 web_server.py
 # ROS2 환경 설정 (수동 설치 시에만 필요)
 source /opt/ros/humble/setup.bash
 
-# 네비게이션 노드 실행
+# 네비게이션 노드 실행 (app_waypoint 폴더에서)
 python3 waypoint.py
 ```
 
@@ -165,12 +142,22 @@ python3 androidstt.py
 ## 📁 파일 구조
 
 ```
-app_waypoint/
-├── waypoint.py          # 메인 네비게이션 노드
-├── web_server.py        # 웹 관리 인터페이스
-├── androidstt.py        # STT 결과 퍼블리셔
-├── waypoints.ini        # 웨이포인트 설정 파일
-└── README.md           # 이 파일
+booros/
+├── app_waypoint/
+│   ├── waypoint.py          # 메인 노드: 음성 명령 → Nav2 주행 → 끄덕임 → 작품 설명
+│   ├── web_server.py        # 웨이포인트 관리 웹 (포트 5001)
+│   ├── androidstt.py        # STT 결과 퍼블리셔 (/stt_result)
+│   └── waypoints.ini        # 웨이포인트 좌표
+├── baseDockerfile/boo_ros/
+│   ├── Dockerfile           # v1 이미지
+│   ├── robot.launch.py      # 로봇 bringup (LiDAR + turtlebot3_node)
+│   └── camera_test/main.py  # Pi 카메라 → sensor_msgs/Image
+├── audioDockerfile/boo_audio/
+│   ├── Dockerfile           # 오디오 이미지
+│   └── src/audio_player.py  # /tts_text → 스피커
+├── turtlebot3_ws/README.md  # 사용한 ROBOTIS 패키지와 버전
+├── turtlebot3_motor_driver.cpp  # 4륜 구동 개조 (OpenCR 펌웨어, ROBOTIS 원본 Apache-2.0 기반)
+└── screenshot/              # 실제 환경 사진
 ```
 
 ## ⚙️ 설정 파일
@@ -245,7 +232,7 @@ w = 0.997    # W 회전 (쿼터니언)
 
 ## 📝 라이선스
 
-이 프로젝트는 MIT 라이선스 하에 배포됩니다.
+이 프로젝트의 직접 작성한 코드는 MIT 라이선스를 따릅니다. `turtlebot3_motor_driver.cpp` 는 ROBOTIS 원본(Apache-2.0)을 수정한 파일로 원 라이선스를 따릅니다.
 
 ## 🤝 기여하기
 
@@ -270,7 +257,7 @@ TurtleBot3를 4륜 구동으로 변경하려면 OpenCR 보드의 모터 드라�
 
 ### 수정할 파일 위치
 ```
-/home/hkit/.arduino15/packages/OpenCR/hardware/OpenCR/1.5.3/libraries/turtlebot3_ros2/src/turtlebot3/turtlebot3_motor_driver.cpp
+~/.arduino15/packages/OpenCR/hardware/OpenCR/1.5.3/libraries/turtlebot3_ros2/src/turtlebot3/turtlebot3_motor_driver.cpp
 ```
 
 ### 변경 사항
@@ -290,7 +277,7 @@ TurtleBot3를 4륜 구동으로 변경하려면 OpenCR 보드의 모터 드라�
 - 전원 공급이 4개 모터 모두 충분한지 확인 필요
 
 
-## 📷 실제 환경 사진 (단일 이미지 표시)
+## 📷 실제 환경 사진
 
 
 <img src="screenshot/1.png" alt="실제 환경 사진 1" width="720" />
