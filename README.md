@@ -236,6 +236,8 @@ w = 0.997    # W 회전 (쿼터니언)
 
 ## 🤝 기여하기
 
+참여자: [@elecs00](https://github.com/elecs00), [@bang756](https://github.com/bang756)
+
 버그 리포트나 기능 제안은 GitHub Issues를 통해 제출해주세요.
 
 ## 📞 지원
